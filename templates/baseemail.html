@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>ISM - mail</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+<body>
+<div style="margin:auto;border:1px solid #ddd;width:800px;border-radius: 20px;padding:20px;margin-top: 30px;background-color: #ccc;">      
+   <div style="font-size: 26px;font-weight: 700;letter-spacing: -0.02em;line-height: 32px;color: #41637e;font-family: sans-serif;text-align: center" align="center" id="emb-email-header">
+		<img style="border: 0;-ms-interpolation-mode: bicubic;display: block;Margin-left: auto;Margin-right: auto;max-width: 152px" src="http://intelligentsalesman.com/assets/images/ISM_logo_orange_notext.PNG" alt="" style="">
+   </div>    
+   <br/><hr/>
+<p style="Margin-top: 0;color: #565656;font-family:Georgia,serif;font-size:16px;line-height:25px;Margin-bottom:25px">Hello {{$data['fname']}}</p> 
+<p style="Margin-top: 0;color: #565656;font-family:Georgia,serif;font-size:16px;line-height:25px;Margin-bottom:25px">
+    your contact number is  {{$data['phone']}}
+    your city of residence is {{$data['City']}}
+ </p>
+<br/>  
+<p> Regards,<br/>
+   {ABC Ltd.}   
+</p>
+</div>
+</body>  
+</html>     

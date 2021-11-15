@@ -1,0 +1,1479 @@
+<!DOCTYPE html>
+<!-- saved from url=(0079)https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  
+  
+
+<meta name="citation_title" content="Creating Web APIs with Python and Flask
+">
+
+<meta name="citation_author" content="Patrick Smyth">
+
+<meta name="citation_publication_date" content="2018-04-02">
+<meta name="citation_journal_title" content="Programming Historian">
+<meta name="citation_public_url" content="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask">
+
+  
+
+  
+  <!--https://dev.twitter.com/cards/-->
+
+
+
+
+
+
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@ProgHist">
+<meta name="twitter:title" content="Creating Web APIs with Python and Flask
+">
+
+
+    <meta name="twitter:description" content="Learn how to set up a basic Application Programming Interface (API) to make your data more accessible to users. This lesson also discusses principles of API design and the benefits of APIs for d...">
+
+
+<meta name="twitter:image" content="https://programminghistorian.org/gallery/creating-apis-with-python-and-flask.png">
+
+  
+
+  <link rel="shortcut icon" href="https://programminghistorian.org/images/favicons/en_favicon.ico" type="image/x-icon">
+
+  <!-- Mobile viewport optimized: h5bp.com/viewport -->
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" href="./Creating Web APIs with Python and Flask _ Programming Historian_files/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+
+  <link href="https://programminghistorian.org/feed.xml" rel="alternate" type="application/atom+xml">
+
+  <title>Creating Web APIs with Python and Flask
+ | Programming Historian</title>
+
+  <link href="./Creating Web APIs with Python and Flask _ Programming Historian_files/css" rel="stylesheet">
+
+  <link rel="stylesheet" href="./Creating Web APIs with Python and Flask _ Programming Historian_files/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous" media="all">
+  <link rel="stylesheet" href="./Creating Web APIs with Python and Flask _ Programming Historian_files/github.css">
+  <link rel="stylesheet" href="./Creating Web APIs with Python and Flask _ Programming Historian_files/style.css">
+
+  <script type="text/javascript" async="" src="./Creating Web APIs with Python and Flask _ Programming Historian_files/ga.js"></script><script src="./Creating Web APIs with Python and Flask _ Programming Historian_files/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+  <script src="./Creating Web APIs with Python and Flask _ Programming Historian_files/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="./Creating Web APIs with Python and Flask _ Programming Historian_files/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+
+  <script type="text/javascript" src="./Creating Web APIs with Python and Flask _ Programming Historian_files/ext_links.js"></script>
+  <script type="text/javascript" src="./Creating Web APIs with Python and Flask _ Programming Historian_files/header_links.js"></script>
+
+  
+  
+
+  <script src="./Creating Web APIs with Python and Flask _ Programming Historian_files/bootstrap-4-navbar.js"></script>
+
+
+</head>
+
+
+  <body>
+    <main>
+      <div class="hide-screen">
+        
+        
+
+<div class="alert alert-success sitewide-alert text-center">
+  <h2><a href="https://www.patreon.com/theprogramminghistorian" class="alert-link" target="_blank">Donate to <i>The Programming Historian</i> today!</a></h2>
+
+</div>
+
+        
+        
+
+
+
+
+
+
+
+
+<nav class="hide-screen navbar navbar-toggleable-sm navbar-dark bg-dark" style="background-color: #444444" role="navigation">
+  <!--<div class="container">-->
+  <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <a class="navbar-brand" href="https://programminghistorian.org/">The Programming
+    Historian</a>
+  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <ul class="nav navbar-nav ml-auto w-100 justify-content-end" role="menubar">
+      <li class="nav-item dropdown mobile-drop" role="menu">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" target="_blank">
+          About
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="https://programminghistorian.org/en/about" role="menuitem">About PH</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/project-team" role="menuitem">Project Team</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/research" role="menuitem">Research</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/privacy-policy" role="menuitem">Privacy Policy</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/translation-concordance" role="menuitem">Translation Concordance</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown mobile-drop" role="menu">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" role="button" target="_blank">
+          Contribute
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+          <a class="dropdown-item" href="https://programminghistorian.org/en/contribute" role="menuitem">Overview</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/feedback" role="menuitem">Feedback</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/reviewer-guidelines" role="menuitem">Reviewer Guidelines</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/author-guidelines" role="menuitem">Author Guidelines</a>
+          
+          
+          <a class="dropdown-item" href="https://programminghistorian.org/en/translator-guidelines" role="menuitem">Translator Guidelines</a>
+          
+          <a class="dropdown-item" href="https://programminghistorian.org/en/editor-guidelines" role="menuitem">Editor Guidelines</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/lesson-requests" role="menuitem">Lesson Requests</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/lesson-retirement-policy" role="menuitem">Lesson Retirement Policy</a>
+          <a class="dropdown-item" href="https://programminghistorian.org/en/support-us" role="menuitem">Support Us</a>
+          <a class="dropdown-item" href="https://github.com/programminghistorian/jekyll/wiki/Making-Technical-Contributions" role="menuitem" target="_blank">Technical Contributions</a>
+        </div>
+      </li>
+
+      <li class="nav-item" role="menuitem">
+        <a class="nav-link" href="https://programminghistorian.org/en/lessons" role="menuitem">Lessons</a>
+      </li>
+
+      <li class="nav-item" role="menuitem">
+        <a class="nav-link" href="https://programminghistorian.org/blog" role="menuitem">Blog</a>
+      </li>
+
+      
+
+      
+
+      <li class="nav-item">
+        <div class="btn-group" role="group" aria-label="Language selector">
+          
+
+          
+          <a class="btn btn-secondary nav-link active disabled" role="button" aria-pressed="true" target="_blank">en</a>
+          
+          
+
+          
+
+          
+
+          
+          <a class="btn btn-secondary nav-link" role="button" href="https://programminghistorian.org/es">es</a>
+          
+          
+          
+
+          
+
+          
+
+          
+          <a class="btn btn-secondary nav-link" role="button" href="https://programminghistorian.org/fr">fr</a>
+          
+          
+          
+        </div>
+      </li>
+    </ul>
+  </div>
+  <!--</div>-->
+</nav>
+
+<nav class="hide-print print-header navbar-brand">The Programming Historian </nav>
+
+      </div>
+      <div class="hide-print print-header">
+        <h1>The Programming Historian</h1>
+      </div>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header>
+
+  <div class="container-fluid">
+
+    <div class="container expanded">
+
+      <div class="row">
+        <div class="col-md-4">
+          <div class="header-image rounded">
+            <img src="./Creating Web APIs with Python and Flask _ Programming Historian_files/creating-apis-with-python-and-flask.png" alt="Diagram with a series of arcs describing a quarter circle">
+          </div>
+        </div>
+
+        <div class="col-md-8">
+          <div class="header-title">
+            <h1><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask">Creating Web APIs with Python and Flask
+</a></h1>
+          </div>
+
+          <div class="header-author">
+            <h2>
+
+
+
+Patrick Smyth</h2>
+          </div>
+
+          <div class="header-abstract">
+            <p>Learn how to set up a basic Application Programming Interface (API) to make your data more accessible to users. This lesson also discusses principles of API design and the benefits of APIs for digital projects.</p>
+
+          </div>
+
+          <div class="container expanded">
+            <div class="row d-flex justify-content-left">
+              
+              <div class="peer-review mr-5">
+                <p>
+                  <a href="https://github.com/programminghistorian/ph-submissions/issues/106" target="_blank">
+                    <i class="fas fa-user-check"></i> Peer-reviewed
+                    </a>
+                </p>
+              </div>
+              
+              <div class="open-license mr-5">
+                <p><a href="https://creativecommons.org/licenses/by/4.0/deed.en" target="_blank"><i class="fas fa-lock-open"></i> CC-BY
+                    4.0</a></p>
+              </div>
+              <div class="donate mr-5">
+                <p><a href="https://programminghistorian.org/en/support-us#donate-to-us"><i class="fas fa-credit-card"></i> Support PH</a></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="container-fluid header-helpers">
+    <div class="container expanded">
+      
+      
+      <div class="col-6 p-0 m-0">
+        
+          <div class="d-flex flex-wrap flex-md-row flex-column justify-content-between">
+            <div>
+              <h3>edited by</h3>
+              <ul>
+                
+                
+                <li>Brandon Walsh</li>
+                
+              </ul>
+            </div>
+
+            <div>
+              <h3>reviewed by</h3>
+              <ul>
+                
+                
+                <li>Ryan Deschamps
+                </li>
+                
+                
+                <li>Megan Kudzia
+                </li>
+                
+              </ul>
+            </div>
+
+            
+
+            
+
+            
+          </div>
+        </div>
+      </div> <!-- end row -->
+    </div>
+
+    <div class="container-fluid header-bottom">
+      <div class="container expanded">
+        <div class="d-flex flex-wrap flex-md-row flex-column justify-content-between">
+          <div class="metarow">
+            <h4>published</h4> 2018-04-02
+          </div>
+          
+          
+          <div class="metarow">
+            <h4>modified</h4> <span id="modified-date">2020-05-12</span>
+          </div>
+          
+          <div class="metarow">
+            <h4>difficulty</h4> 
+
+Medium
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+</header>
+
+<div class="container">
+
+  
+  
+<div class="alert alert-success hide-screen"><h2 id="donate-today">Donate today!<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#donate-today"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Great Open Access tutorials cost money to produce. Join the growing number of people <a href="https://www.patreon.com/theprogramminghistorian" target="_blank">supporting <em>The Programming Historian</em></a> so we can continue to share knowledge free of charge.</p>
+</div>
+
+  
+
+
+
+  
+
+  
+
+
+  
+
+  <div class="content">
+    
+<h2 class="no_toc" id="contents">Contents<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#contents"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<ul id="markdown-toc">
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#lesson-goals" id="markdown-toc-lesson-goals">Lesson Goals</a></li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#setting-up" id="markdown-toc-setting-up">Setting Up</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#installing-python-and-flask" id="markdown-toc-installing-python-and-flask">Installing Python and Flask</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#introducing-apis" id="markdown-toc-introducing-apis">Introducing APIs</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-is-an-api" id="markdown-toc-what-is-an-api">What is an API?</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#when-to-create-an-api" id="markdown-toc-when-to-create-an-api">When to Create an API</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#api-terminology" id="markdown-toc-api-terminology">API Terminology</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#using-apis" id="markdown-toc-using-apis">Using APIs</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#why-use-apis-as-a-researcher" id="markdown-toc-why-use-apis-as-a-researcher">Why Use APIs as a Researcher?</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#an-api-case-study-sensationalism-and-historical-fires" id="markdown-toc-an-api-case-study-sensationalism-and-historical-fires">An API Case Study: Sensationalism and Historical Fires</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-users-want-in-an-api" id="markdown-toc-what-users-want-in-an-api">What Users Want in an API</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#implementing-our-api" id="markdown-toc-implementing-our-api">Implementing Our API</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#overview" id="markdown-toc-overview">Overview</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#creating-a-basic-flask-application" id="markdown-toc-creating-a-basic-flask-application">Creating a Basic Flask Application</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#running-the-application" id="markdown-toc-running-the-application">Running the Application</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-flask-does" id="markdown-toc-what-flask-does">What Flask Does</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#creating-the-api" id="markdown-toc-creating-the-api">Creating the API</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#finding-specific-resources" id="markdown-toc-finding-specific-resources">Finding Specific Resources</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#understanding-our-updated-api" id="markdown-toc-understanding-our-updated-api">Understanding Our Updated API</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#api-design-principles" id="markdown-toc-api-design-principles">API Design Principles</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#designing-requests" id="markdown-toc-designing-requests">Designing Requests</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#documentation-and-examples" id="markdown-toc-documentation-and-examples">Documentation and Examples</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#connecting-our-api-to-a-database" id="markdown-toc-connecting-our-api-to-a-database">Connecting Our API to a Database</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#understanding-our-database-powered-api" id="markdown-toc-understanding-our-database-powered-api">Understanding Our Database-Powered API</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#our-api-in-practice" id="markdown-toc-our-api-in-practice">Our API in Practice</a></li>
+    </ul>
+  </li>
+  <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#resources" id="markdown-toc-resources">Resources</a>    <ul>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#apis-for-humanities-researchers" id="markdown-toc-apis-for-humanities-researchers">APIs for Humanities Researchers</a></li>
+      <li><a href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#api-resources" id="markdown-toc-api-resources">API Resources</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h1 id="lesson-goals">Lesson Goals</h1>
+
+<p>Web APIs are tools for making information and application functionality accessible over the internet. In this lesson, you will:</p>
+
+<ul>
+  <li>Learn what an API is and when you should use one.</li>
+  <li>Learn how to build a web API that returns data to its users.</li>
+  <li>Learn some principles of good API design, applying them to an API that draws book metadata from a database.</li>
+</ul>
+
+<h1 id="setting-up">Setting Up</h1>
+
+<h2 id="prerequisites">Prerequisites<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#prerequisites"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>You can use the Windows, macOS, or Linux operating systems to complete this tutorial, and those few instructions that are not the same across platforms will be explicitly noted. Python 3, the Flask web framework, and a web browser are required for this tutorial, and installation instructions for all platforms are outlined below.</p>
+
+<p>The only knowledge explicitly assumed for this lesson is the ability to use a text editor, such as BBEdit on macOS or Notepad++ on Windows. However, knowledge of the command line, Python, and web concepts such as HTTP may make this tutorial easier to follow. If you’re new to Python, consider working through the Programming Historian series on <a href="https://programminghistorian.org/lessons/introduction-and-installation">dealing with online sources</a> to familiarize yourself with fundamental concepts in Python programming.</p>
+
+<h2 id="installing-python-and-flask">Installing Python and Flask<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#installing-python-and-flask"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>For this tutorial, you will need Python 3 and the Flask web framework. You’ll also require a web browser (such as Firefox) and a text editor (such as Notepad++ or BBEdit).</p>
+
+<p>To download Python, follow <a href="https://www.python.org/downloads/" target="_blank">this link</a>, select the button that says <code class="language-plaintext highlighter-rouge">Download Python 3.x.x</code>, and then run the installer as you normally would to install applications on your operating system. The default settings should be fine.</p>
+
+<p>To confirm that Python installed successfully, first open the command line. In macOS, click the spotlight icon on the top right corner of your desktop (the magnifying glass) and type terminal. The terminal should be the first application that appears. On Windows, click the Start menu icon and type <code class="language-plaintext highlighter-rouge">cmd</code> in the search box, then press <code class="language-plaintext highlighter-rouge">Enter</code>.</p>
+
+<p>Once your command line is open, enter these commands:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python --version
+pip --version
+</code></pre></div></div>
+
+<p>If the output for these commands includes a version number, Python is installed and available from the command line and you can proceed to the next step.</p>
+
+<p>Next, you’ll need to install Flask. At the command line, type</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pip install flask
+</code></pre></div></div>
+
+<p>This will install Flask using the pip package manager for Python. You should see some output ending in a notification that Flask has been installed successfully.</p>
+
+<p>As an alternative to the above installation instructions, you can install the Python 3 version of Anaconda, which can be downloaded <a href="https://www.continuum.io/" target="_blank">here</a>. Anaconda comes with Flask, so if you go this route you will not need to install Flask using the pip package manager.</p>
+
+<p>If you’re running into trouble installing Python, you may find <a href="https://programminghistorian.org/lessons/introduction-and-installation">this Programming Historian article on installing Python</a> helpful. Note that the instructions in that tutorial are for installing Python 2—make sure you choose Python 3 when downloading installers from the Python website, since this tutorial uses Python 3.</p>
+
+<p>If you don’t have a preferred text editor, I recommend <a href="https://www.barebones.com/products/bbedit/download.html" target="_blank">BBEdit</a> for macOS or <a href="https://notepad-plus-plus.org/" target="_blank">Notepad++</a> for Windows.</p>
+
+<h1 id="introducing-apis">Introducing APIs</h1>
+
+<h2 id="what-is-an-api">What is an API?<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-is-an-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>If you’ve heard the term API before, chances are it’s been used not to refer to APIs in general, but instead to a specific kind of API, the web API. A web API allows for information or functionality to be manipulated by other programs via the internet. For example, with Twitter’s web API, you can write a program in a language like Python or Javascript that can perform tasks such as favoriting tweets or collecting tweet metadata.</p>
+
+<p>In programming more generally, the term API, short for Application Programming Interface, refers to a part of a computer program designed to be used or manipulated by another program, as opposed to an interface designed to be used or manipulated by a human. Computer programs frequently need to communicate amongst themselves or with the underlying operating system, and APIs are one way they do it. In this tutorial, however, we’ll be using the term API to refer specifically to web APIs.</p>
+
+<h2 id="when-to-create-an-api">When to Create an API<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#when-to-create-an-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>In general, consider an API if:</p>
+
+<ol>
+  <li>Your data set is large, making download via FTP unwieldy or resource-intensive.</li>
+  <li>Your users will need to access your data in real time, such as for display on another website or as part of an application.</li>
+  <li>Your data changes or is updated frequently.</li>
+  <li>Your users only need access to a part of the data at any one time.</li>
+  <li>Your users will need to perform actions other than retrieve data, such as contributing, updating, or deleting data.</li>
+</ol>
+
+<p>If you have data you wish to share with the world, an API is one way you can get it into the hands of others. However, APIs are not always the best way of sharing data with users. If the size of the data you are providing is relatively small, you can instead provide a “data dump” in the form of a downloadable JSON, XML, CSV, or SQLite file. Depending on your resources, this approach can be viable up to a download size of a few gigabytes.</p>
+
+<p>Remember that you can provide both a data dump and an API, and individual users may find one or the other to better match their use case. <a href="https://openlibrary.org/" target="_blank">Open Library</a>, for example, provides both <a href="https://openlibrary.org/developers/dumps" target="_blank">a data dump</a> and <a href="https://openlibrary.org/developers/api" target="_blank">an API</a>, each of which serves different use cases for different users.</p>
+
+<h2 id="api-terminology">API Terminology<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#api-terminology"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>When using or building APIs, you will encounter these terms frequently:</p>
+
+<ul>
+  <li><strong>HTTP (Hypertext Transfer Protocol)</strong> is the primary means of communicating data on the web. HTTP implements a number of “methods,” which tell which direction data is moving and what should happen to it. The two most common are GET, which pulls data from a server, and POST, which pushes new data to a server.</li>
+  <li><strong>URL (Uniform Resource Locator)</strong> - An address for a resource on the web, such as <code class="language-plaintext highlighter-rouge">https://programminghistorian.org/about</code>. A URL consists of a <strong>protocol</strong> (<code class="language-plaintext highlighter-rouge">http://</code>), domain (<code class="language-plaintext highlighter-rouge">programminghistorian.org</code>), and optional <strong>path</strong> (<code class="language-plaintext highlighter-rouge">/about</code>). A URL describes the location of a specific resource, such as a web page. When reading about APIs, you may see the terms <code class="language-plaintext highlighter-rouge">URL</code>, <code class="language-plaintext highlighter-rouge">request</code>, <code class="language-plaintext highlighter-rouge">URI</code>, or <code class="language-plaintext highlighter-rouge">endpoint</code> used to describe adjacent ideas. This tutorial will prefer the terms URL and request to avoid complication. You can follow a URL or make a GET request in your browser, so you won’t need any special software to make requests in this tutorial.</li>
+  <li><strong>JSON (JavaScript Object Notation)</strong> is a text-based data storage format that is designed to be easy to read for both humans and machines. JSON is generally the most common format for returning data through an API, XML being the second most common.</li>
+  <li><strong>REST (REpresentational State Transfer)</strong> is a philosophy that describes some best practices for implementing APIs. APIs designed with some or all of these principles in mind are called REST APIs. While the API outlined in this lesson uses some REST principles, there is a great deal of disagreement around this term. For this reason, I do not describe the example APIs here as REST APIs, but instead as web or HTTP APIs.</li>
+</ul>
+
+<h1 id="using-apis">Using APIs</h1>
+
+<h2 id="why-use-apis-as-a-researcher">Why Use APIs as a Researcher?<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#why-use-apis-as-a-researcher"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>The primary focus of this lesson is on creating an API, not exploring or using an API that has already been implemented. However, before we start building our own API, it may be useful to discuss how APIs are useful for researchers. In this section, we’ll see how APIs can be useful for approaching historical, textual, or sociological questions using a “macroscopic” or “distant reading” approach that makes use of relatively large amounts of information. In doing so, we’ll familiarize ourselves with the basic elements of a good API. Considering APIs from the perspective of a user will come in useful when we begin to design our own API later in the lesson.</p>
+
+<h2 id="an-api-case-study-sensationalism-and-historical-fires">An API Case Study: Sensationalism and Historical Fires<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#an-api-case-study-sensationalism-and-historical-fires"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Imagine that our research area is sensationalism and the press: has newspaper coverage of major events in the United States become more or less sensational over time? Narrowing the topic, we might ask whether press coverage of, for example, urban fires has increased or decreased with government reporting on fire-related relief spending.</p>
+
+<p>While we won’t be able to explore this question thoroughly, we can begin to approach this research space by collecting historical data on newspaper coverage of fires using an API—in this case, the <a href="http://chroniclingamerica.loc.gov/about/api/" target="_blank">Chronicling America Historical Newspaper API</a>. The Chronicling America API allows access to metadata and text for millions of scanned newspaper pages. In addition, unlike many other APIs, it also does not require an authentication process, allowing us to immediately explore the available data without signing up for an account.</p>
+
+<p>Our initial goal in approaching this research question is to find all newspaper stories in the Chronicling America database that use the term “fire.” Typically, use of an API starts with its documentation. On the <a href="http://chroniclingamerica.loc.gov/about/api/" target="_blank">Chronicling America API page</a>, we find two pieces of information critical for getting the data we want from the API: the API’s <strong>base URL</strong> and the <strong>path</strong> corresponding to the function we want to perform on the API—in this case, searching the database.</p>
+
+<p>Our base URL is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://chroniclingamerica.loc.gov
+</code></pre></div></div>
+
+<p>All requests we make to the API must begin with this portion of the URL. All APIs have a base URL like this one that is the same across all requests to the API.</p>
+
+<p>Our path is:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/search/pages/results/
+</code></pre></div></div>
+
+<p>If we combine the base URL and the path together into one URL, we’ll have created a request to the Chronicling America API that returns all available data in the database:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://chroniclingamerica.loc.gov/search/pages/results/
+</code></pre></div></div>
+
+<p>If you <a href="http://chroniclingamerica.loc.gov/search/pages/results/" target="_blank">visit the link above</a>, you’ll see all items available in Chronicling America (12,243,633 at the time of writing), , not just the entries related to our search term, “fire.” This request also returns a formatted HTML view, rather than the structured view we want to use to collect data.</p>
+
+<p>According to the Chronicling America documentation, in order to get structured data specifically relating to fire, we need to pass one more kind of data in our request: <strong>query parameters</strong>.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://chroniclingamerica.loc.gov/search/pages/results/?format=json&amp;proxtext=fire
+</code></pre></div></div>
+
+<p>The query parameters follow the <code class="language-plaintext highlighter-rouge">?</code> in the request, and are seperated from one another by the <code class="language-plaintext highlighter-rouge">&amp;</code> symbol. The first query parameter, <code class="language-plaintext highlighter-rouge">format=json</code>, changes the returned data from HTML to JSON. The second, <code class="language-plaintext highlighter-rouge">proxtext=fire</code>, narrows the returned entries to those that include our search term.</p>
+
+<p>If you <a href="http://chroniclingamerica.loc.gov/search/pages/results/?format=json&amp;proxtext=fire" target="_blank">follow the above link</a> in your browser, you’ll see a structured list of the items in the database related to the search term “fire.” The format of the returned data is called JSON, and is a structured format that looks like this excerpt from the Chronicling America results:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">"city"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="s2">"Washington"</span><span class="w">
+      </span><span class="p">]</span><span class="err">,</span><span class="w">
+      </span><span class="nl">"date"</span><span class="p">:</span><span class="w"> </span><span class="s2">"19220730"</span><span class="err">,</span><span class="w">
+      </span><span class="nl">"title"</span><span class="p">:</span><span class="w"> </span><span class="s2">"The Washington Herald."</span><span class="err">,</span><span class="w">
+      </span><span class="nl">"end_year"</span><span class="p">:</span><span class="w"> </span><span class="mi">1939</span><span class="err">,</span><span class="w">
+</span></code></pre></div></div>
+
+<p>By making requests to the Chronicling America API, we’ve accessed information on news stories that contain the search term “fire,” and returned data that includes the date of publication and the page the article appears on. If we were to pursue this research question further, a next step might be finding how many stories relating to fire appear on a newspaper’s front page over time, or perhaps cleaning the data to reduce the number of false positives. As we have seen, however, exploring an API can be a useful first step in gathering data to tackle a research question.</p>
+
+<div class="alert alert-warning">
+Note that in this section, we skipped an important step: finding an appropriate API in the first place. Some resources for researching APIs are available at the end of this lesson.
+</div>
+
+<h2 id="what-users-want-in-an-api">What Users Want in an API<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-users-want-in-an-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>As we’ve learned, documentation is a user’s starting place when working with a new API, and well-designed URLs make it easier for users to intuitively find resources. Because they help users to quickly access information through your API, these elements—documentation and well-conceived URLs—are the <em>sine qua non</em> of a good API. We’ll discuss these elements in greater depth later in this tutorial.</p>
+
+<p>As you use other APIs in your research, you’ll develop a sense of what makes a good API from the perspective of a potential user. Just as strong readers often make strong writers, using APIs created by others and critically evaluating their implementation and documentation will help you better design your own APIs.</p>
+
+<h1 id="implementing-our-api">Implementing Our API</h1>
+
+<h2 id="overview">Overview<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#overview"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>This section will show you how to build a prototype API using Python and the Flask web framework. Our example API will take the form of a distant reading archive—a book catalog that goes beyond standard bibliographic information to include data of interest to those working on digital projects. In this case, besides title and date of publication, our API will also serve the first sentence of each book. This should be enough data to allow us to envision some potential research questions without overwhelming us as we focus on the design of our API.</p>
+
+<p>We’ll begin by using Flask to create a home page for our site. In this step, we’ll learn the basics of how Flask works and make sure our software is configured correctly. Once we have a small Flask application working in the form of a home page, we’ll iterate on this site, turning it into a functioning API.</p>
+
+<h2 id="creating-a-basic-flask-application">Creating a Basic Flask Application<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#creating-a-basic-flask-application"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p><a href="http://flask.pocoo.org/" target="_blank">Flask</a> is a web framework for Python, meaning that it provides functionality for building web applications, including managing HTTP requests and rendering templates. In this section, we will create a basic Flask application. In later sections, we’ll add to this application to create our API. Don’t worry if you don’t understand each individual line of code yet—explanations will be forthcoming once you have this initial version of the application working.</p>
+
+<div class="alert alert-warning">
+<p><strong>Why Flask?</strong></p>
+
+<p>Python has a number of web frameworks that can be used to create web apps and APIs. The most well-known is Django, a framework that has a set project structure and which includes many built-in tools. This can save time and effort for experienced programmers, but can be overwhelming. Flask applications tend to be written on a blank canvas, so to speak, and so are more suited to a contained application such as our prototype API.</p>
+</div>
+
+<p>First, create a new folder on your computer that will serve as a project folder. This can be in your <code class="language-plaintext highlighter-rouge">Desktop</code> folder, but I recommend creating a dedicated <code class="language-plaintext highlighter-rouge">projects</code> folder for this and similar projects. This tutorial will assume that the files related to this lesson will be stored in a folder called <code class="language-plaintext highlighter-rouge">api</code> inside a folder named <code class="language-plaintext highlighter-rouge">projects</code> in your home directory. If you need help with navigation on the command line, see the <a href="https://programminghistorian.org/lessons/intro-to-bash">Programming Historian Introduction to the Bash Command Line</a> for the macOS and Linux command line or the <a href="https://programminghistorian.org/lessons/intro-to-powershell">Introduction to the Windows Command Line with PowerShell</a> for Windows.</p>
+
+<p>In macOS, you can directly create a an <code class="language-plaintext highlighter-rouge">api</code> folder inside a <code class="language-plaintext highlighter-rouge">projects</code> folder in your home directory with this terminal  command:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir -p ~/projects/api
+</code></pre></div></div>
+
+<p>On Windows, you can create the <code class="language-plaintext highlighter-rouge">api</code> folder with these commands in your <code class="language-plaintext highlighter-rouge">cmd</code> command line environment:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>md projects
+cd projects
+md api
+</code></pre></div></div>
+
+<p>You can also create the <code class="language-plaintext highlighter-rouge">projects</code> and <code class="language-plaintext highlighter-rouge">api</code> folders using your operating system’s graphical user interface.</p>
+
+<p>Next, open a text editor (such as Notepad++ or BBEdit) and enter the following code:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">flask</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="p">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">config</span><span class="p">[</span><span class="s">"DEBUG"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">"&lt;h1&gt;Distant Reading Archive&lt;/h1&gt;&lt;p&gt;This site is a prototype API for distant reading of science fiction novels.&lt;/p&gt;"</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Save this code as <code class="language-plaintext highlighter-rouge">api.py</code> in the <code class="language-plaintext highlighter-rouge">api</code> folder you created for this tutorial.</p>
+
+<h2 id="running-the-application">Running the Application<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#running-the-application"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>In the command line, navigate to your <code class="language-plaintext highlighter-rouge">api</code> folder:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd projects/api
+</code></pre></div></div>
+
+<p>You can check if you’re in the correct folder by running the <code class="language-plaintext highlighter-rouge">pwd</code> command. Once you’re in your project directory, run the Flask application with the command:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python api.py
+</code></pre></div></div>
+
+<p>You should see output similar to this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code> * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)
+</code></pre></div></div>
+
+<p>You may also see some lines related to debugging. This message means that Flask is running your application locally (on your computer) at that address. Follow the link above, <a href="http://127.0.0.1:5000/" target="_blank">http://127.0.0.1:5000/</a>, using your web browser to see the running application:</p>
+
+<figure>
+    <img src="./Creating Web APIs with Python and Flask _ Programming Historian_files/welcome.png" alt="The home page when rendered in a browser.">
+<figcaption>
+    <p>The home page when rendered in a browser.</p>
+
+</figcaption>
+</figure>
+
+<p>Congratulations, you’ve created a working web application!</p>
+
+<h2 id="what-flask-does">What Flask Does<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#what-flask-does"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Now that we have a homepage for our archive, let’s talk about how Flask works and what the above code is doing.</p>
+
+<p>Flask maps HTTP requests to Python functions. In this case, we’ve mapped one URL path (‘<code class="language-plaintext highlighter-rouge">/</code>’) to one function, <code class="language-plaintext highlighter-rouge">home</code>. When we connect to the Flask server at <a href="http://127.0.0.1:5000/" target="_blank">http://127.0.0.1:5000/</a>, Flask checks if there is a match between the path provided and a defined function. Since <code class="language-plaintext highlighter-rouge">/</code>, or no additional provided path, has been mapped to the <code class="language-plaintext highlighter-rouge">home</code> function, Flask runs the code in the function and displays the returned result in the browser. In this case, the returned result is HTML markup for a home page welcoming visitors to the site hosting our API.</p>
+
+<p>The process of mapping URLs to functions is called <strong>routing</strong>. The</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>@app.route('/', methods=['GET'])
+</code></pre></div></div>
+
+<p>syntax is the part of the program that lets Flask know that this function, <code class="language-plaintext highlighter-rouge">home</code>, should be mapped to the path <code class="language-plaintext highlighter-rouge">/</code>. The <code class="language-plaintext highlighter-rouge">methods</code> list (<code class="language-plaintext highlighter-rouge">methods=['GET']</code>) is a keyword argument that lets Flask know what kind of HTTP requests are allowed. We’ll only be using <code class="language-plaintext highlighter-rouge">GET</code> requests in this tutorial, but many web applications need to use both <code class="language-plaintext highlighter-rouge">GET</code> requests (to send data from the application to the user) and <code class="language-plaintext highlighter-rouge">POST</code> requests (to receive data from a user).</p>
+
+<p>Below are brief explanations of the other components of the application:</p>
+
+<p><code class="language-plaintext highlighter-rouge">import flask</code> — Imports the Flask library, making the code available to the rest of the application.</p>
+
+<p><code class="language-plaintext highlighter-rouge">app = flask.Flask(__name__)</code> — Creates the Flask application object, which contains data about the application and also methods (object functions) that tell the application to do certain actions. The last line, <code class="language-plaintext highlighter-rouge">app.run()</code>, is one such method.</p>
+
+<p><code class="language-plaintext highlighter-rouge">app.config["DEBUG"] = True</code> — Starts the debugger. With this line, if your code is malformed, you’ll see an error when you visit your app. Otherwise you’ll only see a generic message such as <code class="language-plaintext highlighter-rouge">Bad Gateway</code> in the browser when there’s a problem with your code.</p>
+
+<p><code class="language-plaintext highlighter-rouge">app.run()</code> — A method that runs the application server.</p>
+
+<p>While it’s useful to have a familiarity with what’s going on in the script, don’t worry if you don’t understand precisely what every element is doing at this stage. If you understand the general outline of how this portion works, the details of how Flask renders pages are likely to become more understandable as we continue to develop our API.</p>
+
+<h2 id="creating-the-api">Creating the API<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#creating-the-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Now that we have a running Flask application and know a little about what Flask does, we’re finally ready to implement a small API with data that we’ll define right in our application.</p>
+
+<p>We’ll be adding our data as a list of Python dictionaries. Dictionaries in Python group pairs of keys and values, like this:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span>
+    <span class="s">'key'</span><span class="p">:</span> <span class="s">'value'</span><span class="p">,</span>
+    <span class="s">'key'</span><span class="p">:</span> <span class="s">'value'</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The key identifies the type of information represented, such as <code class="language-plaintext highlighter-rouge">title</code> or <code class="language-plaintext highlighter-rouge">id</code>. The value is the actual data. For example, a short telephone book might take this format:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">'name'</span><span class="p">:</span> <span class="s">'Alexander Graham Bell'</span><span class="p">,</span>
+        <span class="s">'number'</span><span class="p">:</span> <span class="s">'1-333-444-5555'</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">'name'</span><span class="p">:</span> <span class="s">'Thomas A. Watson'</span><span class="p">,</span>
+        <span class="s">'number'</span><span class="p">:</span> <span class="s">'1-444-555-6666'</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div></div>
+
+<p>The above phone book is a list of two dictionaries. Each dictionary is a phone book entry consisting of two keys, <code class="language-plaintext highlighter-rouge">name</code> and <code class="language-plaintext highlighter-rouge">number</code>, each paired with a value that provides the actual information.</p>
+
+<p>Let’s add some data (entries on three science fiction novels) as a list of dictionaries. Each dictionary will contain ID number, title, author, first sentence, and year of publication for each book. Finally, we’ll add a new function: a route that will allow a visitor to access our data.</p>
+
+<p>Replace our previous code in <code class="language-plaintext highlighter-rouge">api.py</code> with the code below:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="p">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">config</span><span class="p">[</span><span class="s">"DEBUG"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="c1"># Create some test data for our catalog in the form of a list of dictionaries.
+</span><span class="n">books</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'A Fire Upon the Deep'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Vernor Vinge'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'The coldsleep itself was dreamless.'</span><span class="p">,</span>
+     <span class="s">'year_published'</span><span class="p">:</span> <span class="s">'1992'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'The Ones Who Walk Away From Omelas'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Ursula K. Le Guin'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'With a clamor of bells that set the swallows soaring, the Festival of Summer came to the city Omelas, bright-towered by the sea.'</span><span class="p">,</span>
+     <span class="s">'published'</span><span class="p">:</span> <span class="s">'1973'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'Dhalgren'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Samuel R. Delany'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'to wound the autumnal city.'</span><span class="p">,</span>
+     <span class="s">'published'</span><span class="p">:</span> <span class="s">'1975'</span><span class="p">}</span>
+<span class="p">]</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'''&lt;h1&gt;Distant Reading Archive&lt;/h1&gt;
+&lt;p&gt;A prototype API for distant reading of science fiction novels.&lt;/p&gt;'''</span>
+
+
+<span class="c1"># A route to return all of the available entries in our catalog.
+</span><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/api/v1/resources/books/all'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_all</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Run the code (navigate to your <code class="language-plaintext highlighter-rouge">api</code> folder in the command line and enter <code class="language-plaintext highlighter-rouge">python api.py</code>). Once the server is running, visit our route URL to view the data in the catalog:</p>
+
+<p><a href="http://127.0.0.1:5000/api/v1/resources/books/all" target="_blank">http://127.0.0.1:5000/api/v1/resources/books/all</a></p>
+
+<p>You should see JSON output for the three entries in our test catalog. Flask provides us with a <code class="language-plaintext highlighter-rouge">jsonify</code> function that allows us to convert lists and dictionaries to JSON format. In the route we created, our book entries are converted from a list of Python dictionaries to JSON before being returned to a user.</p>
+
+<p>At this point, you’ve created a working, if limited, API. In the next section, we’ll allow users to find books via more specific data, such as an entry’s ID.</p>
+
+<h2 id="finding-specific-resources">Finding Specific Resources<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#finding-specific-resources"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Right now, users can only view our entire database—they can’t filter or find specific resources. While this isn’t a problem with our test catalog, this will quickly become less useful as we add data. In this section, we’ll add a function that allows users to filter their returned results using a more specific request.</p>
+
+<p>Below is the code for our new application with filtering capability. As before, we’ll examine the code more carefully once you have it running.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="p">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">config</span><span class="p">[</span><span class="s">"DEBUG"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="c1"># Create some test data for our catalog in the form of a list of dictionaries.
+</span><span class="n">books</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'A Fire Upon the Deep'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Vernor Vinge'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'The coldsleep itself was dreamless.'</span><span class="p">,</span>
+     <span class="s">'year_published'</span><span class="p">:</span> <span class="s">'1992'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'The Ones Who Walk Away From Omelas'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Ursula K. Le Guin'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'With a clamor of bells that set the swallows soaring, the Festival of Summer came to the city Omelas, bright-towered by the sea.'</span><span class="p">,</span>
+     <span class="s">'published'</span><span class="p">:</span> <span class="s">'1973'</span><span class="p">},</span>
+    <span class="p">{</span><span class="s">'id'</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+     <span class="s">'title'</span><span class="p">:</span> <span class="s">'Dhalgren'</span><span class="p">,</span>
+     <span class="s">'author'</span><span class="p">:</span> <span class="s">'Samuel R. Delany'</span><span class="p">,</span>
+     <span class="s">'first_sentence'</span><span class="p">:</span> <span class="s">'to wound the autumnal city.'</span><span class="p">,</span>
+     <span class="s">'published'</span><span class="p">:</span> <span class="s">'1975'</span><span class="p">}</span>
+<span class="p">]</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'''&lt;h1&gt;Distant Reading Archive&lt;/h1&gt;
+&lt;p&gt;A prototype API for distant reading of science fiction novels.&lt;/p&gt;'''</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/api/v1/resources/books/all'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_all</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">books</span><span class="p">)</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/api/v1/resources/books'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_id</span><span class="p">():</span>
+    <span class="c1"># Check if an ID was provided as part of the URL.
+</span>    <span class="c1"># If ID is provided, assign it to a variable.
+</span>    <span class="c1"># If no ID is provided, display an error in the browser.
+</span>    <span class="k">if</span> <span class="s">'id'</span> <span class="ow">in</span> <span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">:</span>
+        <span class="nb">id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">request</span><span class="p">.</span><span class="n">args</span><span class="p">[</span><span class="s">'id'</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">"Error: No id field provided. Please specify an id."</span>
+
+    <span class="c1"># Create an empty list for our results
+</span>    <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Loop through the data and match results that fit the requested ID.
+</span>    <span class="c1"># IDs are unique, but other fields might return many results
+</span>    <span class="k">for</span> <span class="n">book</span> <span class="ow">in</span> <span class="n">books</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">book</span><span class="p">[</span><span class="s">'id'</span><span class="p">]</span> <span class="o">==</span> <span class="nb">id</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">book</span><span class="p">)</span>
+
+    <span class="c1"># Use the jsonify function from Flask to convert our list of
+</span>    <span class="c1"># Python dictionaries to the JSON format.
+</span>    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></div>
+
+<p>Once you’ve updated your API with the <code class="language-plaintext highlighter-rouge">api_id</code> function, run your code as before (<code class="language-plaintext highlighter-rouge">python api.py</code> from your <code class="language-plaintext highlighter-rouge">api</code> directory) and visit the below URLs to test the new filtering capability:</p>
+
+<p><a href="http://127.0.0.1:5000/api/v1/resources/books?id=0" target="_blank">127.0.0.1:5000/api/v1/resources/books?id=0</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?id=1" target="_blank">127.0.0.1:5000/api/v1/resources/books?id=1</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?id=2" target="_blank">127.0.0.1:5000/api/v1/resources/books?id=2</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?id=3" target="_blank">127.0.0.1:5000/api/v1/resources/books?id=3</a></p>
+
+<p>Each of these should return a different entry, except for the last, which should return an empty list: <code class="language-plaintext highlighter-rouge">[]</code>, since there is no book for which the id value is 3. (Counting in programming typically starts from 0, so id=3 would be a request for a nonexistent fourth item.) In the next section, we’ll explore our updated API in more detail.</p>
+
+<h2 id="understanding-our-updated-api">Understanding Our Updated API<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#understanding-our-updated-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>In this code, we first create a new function, called <code class="language-plaintext highlighter-rouge">api_id</code>, with the <code class="language-plaintext highlighter-rouge">@app.route</code> syntax that maps the function to the path <code class="language-plaintext highlighter-rouge">/api/v1/resources/books</code>. That means that this function will run when we access <a href="http://127.0.0.1:5000/api/v1/resources/books" target="_blank">http://127.0.0.1:5000/api/v1/resources/books</a>. (Note that accessing this link without providing an ID will give the error message we provided in the code: <code class="language-plaintext highlighter-rouge">Error: No id field provided. Please specify an id.</code>)</p>
+
+<p>Inside our function, we do two things:</p>
+
+<p>First, examine the provided URL for an id and select the books that match that id. The id must be provided like this: <code class="language-plaintext highlighter-rouge">?id=0</code>. Data passed through URLs like this (after the <code class="language-plaintext highlighter-rouge">?</code>) are called <strong>query parameters</strong>—we’ve seen them before when we worked with the Chronicling America API. They’re a feature of HTTP used for filtering for specific kinds of data.</p>
+
+<p>This part of the code determines if there is a query parameter, like <code class="language-plaintext highlighter-rouge">?id=0</code>, and then assigns the provided ID to a variable.</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    if 'id' in request.args:
+        id = int(request.args['id'])
+    else:
+        return "Error: No id field provided. Please specify an id."
+</code></pre></div></div>
+
+<p>Then this section moves through our test catalog of books, matches those books that have the provided ID, and appends them to the list that will be returned to the user:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    for book in books:
+        if book['id'] == id:
+            results.append(book)
+</code></pre></div></div>
+
+<p>Finally, the <code class="language-plaintext highlighter-rouge">return jsonify(results)</code> line takes the list of results and renders them in the browser as JSON.</p>
+
+<p>If you’ve gotten this far, you’ve created an actual API. Celebrate! At the end of this lesson, you’ll be exposed to a somewhat more complex API that uses a database, but most of the principles and patterns we’ve used so far will still apply. In the next section, we’ll discuss some guidelines for creating a well-designed API that others will actually want to use. In the last section of the tutorial, we’ll apply these principles to a version of our API that pulls in results from a database.</p>
+
+<h1 id="api-design-principles">API Design Principles</h1>
+
+<p>Thus far, we’ve created a working API with test data that we’ve provided right in our application. Our next version of our API will pull in data from a database before providing it to a user. It will also take additional query parameters, allowing users to filter by fields other than ID.</p>
+
+<p>Before building more functionality into our application, let’s reflect on some of the API design decisions that we’ve made so far. Two aspects of a good API are usability and maintainability, and as we build more functionality into our API, we’ll be keeping many of the following considerations in mind.</p>
+
+<h2 id="designing-requests">Designing Requests<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#designing-requests"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>The prevailing design philosophy of modern APIs is called REST. For our purposes, the most important thing about REST is that it’s based on the four methods defined by the HTTP protocol: POST, GET, PUT, and DELETE. These correspond to the four traditional actions performed on data in a database: CREATE, READ, UPDATE, and DELETE. In this tutorial, we’ll only be concerned with GET requests, which correspond to reading from a database.</p>
+
+<p>Because HTTP requests are so integral to using a REST API, many design principles revolve around how requests should be formatted. We’ve already created one HTTP request, which returns all books provided in our sample data. To understand the considerations that go into formatting this request, let’s first consider a weak or poorly-designed example of an API endpoint:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://api.example.com/getbook/10
+</code></pre></div></div>
+
+<p>The formatting of this request has a number of issues. The first is semantic—in a REST API, our verbs are typically <code class="language-plaintext highlighter-rouge">GET</code>, <code class="language-plaintext highlighter-rouge">POST</code>, <code class="language-plaintext highlighter-rouge">PUT</code>, or <code class="language-plaintext highlighter-rouge">DELETE</code>, and are determined by the request method rather than in the request URL. That means that the word “get” should not appear in our request, since “get” is implied by the fact that we’re using a HTTP GET method. In addition, resource collections such as <code class="language-plaintext highlighter-rouge">books</code> or <code class="language-plaintext highlighter-rouge">users</code> should be denoted with plural nouns. This makes it clear when an API is referring to a collection (<code class="language-plaintext highlighter-rouge">books</code>) or an entry (<code class="language-plaintext highlighter-rouge">book</code>). Incorporating these principles, our API would look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://api.example.com/books/10
+</code></pre></div></div>
+
+<p>The above request uses part of the path (<code class="language-plaintext highlighter-rouge">/10</code>) to provide the ID. While this is not an uncommon approach, it’s somewhat inflexible—with URLs constructed in this manner, you can generally only filter by one field at a time. Query parameters allow for filtering by multiple database fields and make more sense when providing “optional” data, such as an output format:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://api.example.com/books?author=Ursula+K.+Le Guin&amp;published=1969&amp;output=xml
+</code></pre></div></div>
+
+<p>When designing how requests to your API should be structured, it also makes sense to plan for future additions. Even if the current version of your API serves information on only one type of resource—<code class="language-plaintext highlighter-rouge">books</code>, for example—it makes sense to plan as if you might add other resources or non-resource functionality to your API in the future:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>http://api.example.com/resources/books?id=10
+</code></pre></div></div>
+
+<p>Adding an extra segment on your path  such as “resources” or “entries” gives you the option to allow users to search across all resources available, making it easier for you to later support requests such as these:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://api.example.com/v1/resources/images?id=10
+https://api.example.com/v1/resources/all
+</code></pre></div></div>
+
+<p>Another way to plan for your API’s future is to add a version number to the path. This means that, should you have to redesign your API, you can continue to support the old version of the API under the old version number while releasing, for example, a second version (<code class="language-plaintext highlighter-rouge">v2</code>) with improved or different functionality. This way, applications and scripts built using the old version of your API won’t cease to function after your upgrade.</p>
+
+<p>After incorporating these design improvements, a request to our API might look like this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://api.example.com/v1/resources/books?id=10
+</code></pre></div></div>
+
+<h2 id="documentation-and-examples">Documentation and Examples<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#documentation-and-examples"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Without documentation, even the best-designed API will be unusable. Your API should have documentation describing the resources or functionality available through your API that also provides concrete working examples of request URLs or code for your API. You should have a section for each resource that describes which fields, such as <code class="language-plaintext highlighter-rouge">id</code> or <code class="language-plaintext highlighter-rouge">title</code>, it accepts. Each section should have an example in the form of a sample HTTP request or block of code.</p>
+
+<p>A fairly common practice in documenting APIs is to provide annotations in your code that are then automatically collated into documentation using a tool such as <a href="http://www.doxygen.org/" target="_blank">Doxygen</a> or <a href="https://www.sphinx-doc.org/en/stable/" target="_blank">Sphinx</a>. These tools create documentation from <strong>docstrings</strong>—comments you make on your function definitions. While this kind of documentation is a good idea, you shouldn’t consider your job done if you’ve only documented your API to this level. Instead, try to imagine yourself as a potential user of your API and provide working examples. In an ideal world, you would have three kinds of documentation for your API: a reference that details each route and its behavior, a guide that explains the reference in prose, and at least one or two tutorials that explain every step in detail.</p>
+
+<p>For inspiration on how to approach API documentation, see the <a href="http://api.repo.nypl.org/" target="_blank">New York Public Library Digital Collections API</a>, which sets a standard of documentation achievable for many academic projects. For an extensively documented (though sometimes overwhelming) API, see the <a href="https://www.mediawiki.org/wiki/API:Main_page" target="_blank">MediaWiki Action API</a>, which provides documentation to users who pass partial queries to the API. (In our example above, we returned an error on a partial query.) For other professionally maintained API documentation examples, consider the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/889392-api-documentation" target="_blank">World Bank API</a>, the various <a href="https://developer.nytimes.com/" target="_blank">New York Times APIs</a>, or the <a href="https://pro.europeana.eu/resources/apis" target="_blank">Europeana Pro API</a>.</p>
+
+<h1 id="connecting-our-api-to-a-database">Connecting Our API to a Database</h1>
+
+<p>This last example of our Distant Reading Archive API pulls in data from a database, implements error handling, and can filter books by publication date. The database used is SQLite, a lightweight database engine that is supported in Python by default. SQLite files typically end with the <code class="language-plaintext highlighter-rouge">.db</code> file extension.</p>
+
+<p>Before we modify our code, first <a href="https://programminghistorian.org/assets/creating-apis-with-python-and-flask/books.db">download the example database from this location</a> and copy the file to your <code class="language-plaintext highlighter-rouge">api</code> folder using your graphical user interface. The final version of our API will query this database when returning results to users.</p>
+
+<p>Copy the below code into your text editor. As before, we’ll examine the code more closely once you have it running.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">flask</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">request</span><span class="p">,</span> <span class="n">jsonify</span>
+<span class="kn">import</span> <span class="nn">sqlite3</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">flask</span><span class="p">.</span><span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">app</span><span class="p">.</span><span class="n">config</span><span class="p">[</span><span class="s">"DEBUG"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+<span class="k">def</span> <span class="nf">dict_factory</span><span class="p">(</span><span class="n">cursor</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">cursor</span><span class="p">.</span><span class="n">description</span><span class="p">):</span>
+        <span class="n">d</span><span class="p">[</span><span class="n">col</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">d</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">home</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">'''&lt;h1&gt;Distant Reading Archive&lt;/h1&gt;
+&lt;p&gt;A prototype API for distant reading of science fiction novels.&lt;/p&gt;'''</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/api/v1/resources/books/all'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_all</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'books.db'</span><span class="p">)</span>
+    <span class="n">conn</span><span class="p">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">dict_factory</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">all_books</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT * FROM books;'</span><span class="p">).</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">all_books</span><span class="p">)</span>
+
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">page_not_found</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">"&lt;h1&gt;404&lt;/h1&gt;&lt;p&gt;The resource could not be found.&lt;/p&gt;"</span><span class="p">,</span> <span class="mi">404</span>
+
+
+<span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">route</span><span class="p">(</span><span class="s">'/api/v1/resources/books'</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'GET'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">api_filter</span><span class="p">():</span>
+    <span class="n">query_parameters</span> <span class="o">=</span> <span class="n">request</span><span class="p">.</span><span class="n">args</span>
+
+    <span class="nb">id</span> <span class="o">=</span> <span class="n">query_parameters</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'id'</span><span class="p">)</span>
+    <span class="n">published</span> <span class="o">=</span> <span class="n">query_parameters</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'published'</span><span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">query_parameters</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="s">'author'</span><span class="p">)</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="s">"SELECT * FROM books WHERE"</span>
+    <span class="n">to_filter</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="nb">id</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' id=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">published</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' published=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">published</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">author</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' author=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">id</span> <span class="ow">or</span> <span class="n">published</span> <span class="ow">or</span> <span class="n">author</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">page_not_found</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+
+    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s">';'</span>
+
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'books.db'</span><span class="p">)</span>
+    <span class="n">conn</span><span class="p">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">dict_factory</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="n">to_filter</span><span class="p">).</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+
+<span class="n">app</span><span class="p">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></div>
+<p>Save the code as <code class="language-plaintext highlighter-rouge">api_final.py</code> in your <code class="language-plaintext highlighter-rouge">api</code> folder and run it by navigating to your project folder in the terminal and entering the command:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>python api_final.py
+</code></pre></div></div>
+
+<p>Note that if a previous version of the code is still running, you will first need to end that process by pressing <code class="language-plaintext highlighter-rouge">Control-C</code> before executing the new code. Once this example is running, try out the filtering functionality with these HTTP requests:</p>
+
+<p><a href="http://127.0.0.1:5000/api/v1/resources/books/all" target="_blank">http://127.0.0.1:5000/api/v1/resources/books/all</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?author=Connie+Willis" target="_blank">http://127.0.0.1:5000/api/v1/resources/books?author=Connie+Willis</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?author=Connie+Willis&amp;published=1993" target="_blank">http://127.0.0.1:5000/api/v1/resources/books?author=Connie+Willis&amp;published=1999</a>
+<a href="http://127.0.0.1:5000/api/v1/resources/books?published=2010" target="_blank">http://127.0.0.1:5000/api/v1/resources/books?published=2010</a></p>
+
+<p>The database downloaded for this lesson has 67 entries, one for each of the winners of the Hugo Award for best science fiction novel between 1953 and 2014 (avoiding the voting controversy of 2015). The data set includes the novel’s title, author, year of publication, and first sentence. Our API allows users to filter by three fields: <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">published</code> (year of publication), and <code class="language-plaintext highlighter-rouge">author</code>.</p>
+
+<p>The first request returns all entries in the database, similar to the <code class="language-plaintext highlighter-rouge">/all</code> request we implemented for the last version of our API. The second request returns all books by the author Connie Willis (<code class="language-plaintext highlighter-rouge">?author=Connie+Willis</code>). Note that, within a query parameter, spaces between words are denoted with a <code class="language-plaintext highlighter-rouge">+</code> sign, hence <code class="language-plaintext highlighter-rouge">Connie+Willis</code>. The third request filters by two fields—author and year of publication. Instead of the three books returned by requesting <code class="language-plaintext highlighter-rouge">?author=Connie+Willis</code>, this request returns only the entry to <em>The Doomsday Book</em>, published in 1993. The last request returns all Hugo winners from the year 2010 (note that, in some years, more than one Hugo is awarded).</p>
+
+<p>As we can see this version of our API serves a larger number of results, results that are stored in an SQLite database (<code class="language-plaintext highlighter-rouge">books.db</code>). When our user requests an entry or set of entries, our API pulls that information from the database by building and executing an SQL query. This iteration of our API also allows for filtering by more than one field. We’ll discuss potential uses for this functionality after examining our code more closely.</p>
+
+<h2 id="understanding-our-database-powered-api">Understanding Our Database-Powered API<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#understanding-our-database-powered-api"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Relational databases allow for the storage and retrieval of data, which is stored in tables. Tables are similar to spread sheets in that they have columns and rows—columns indicate what the data representes, such as “title” or “date.” Rows represent individual entries, which could be books, users, transactions, or any other kind of entity.</p>
+
+<p>The database we’re working with has five columns <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">published</code>, <code class="language-plaintext highlighter-rouge">author</code>, <code class="language-plaintext highlighter-rouge">title</code>, and <code class="language-plaintext highlighter-rouge">first_sentence</code>. Each row represents one book that won the Hugo award in the year under the <code class="language-plaintext highlighter-rouge">published</code> heading, and the text of which begins with the sentence in the <code class="language-plaintext highlighter-rouge">first_sentence</code> column.</p>
+
+<p>Rather than use test data defined in the application, our <code class="language-plaintext highlighter-rouge">api_all</code> function pulls in data from our Hugo database:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">api_all</span><span class="p">():</span>
+    <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="p">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'books.db'</span><span class="p">)</span>
+    <span class="n">conn</span><span class="p">.</span><span class="n">row_factory</span> <span class="o">=</span> <span class="n">dict_factory</span>
+    <span class="n">cur</span> <span class="o">=</span> <span class="n">conn</span><span class="p">.</span><span class="n">cursor</span><span class="p">()</span>
+    <span class="n">all_books</span> <span class="o">=</span> <span class="n">cur</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s">'SELECT * FROM books;'</span><span class="p">).</span><span class="n">fetchall</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">jsonify</span><span class="p">(</span><span class="n">all_books</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>First, we connect to the database using our <code class="language-plaintext highlighter-rouge">sqlite3</code> library. An object representing the connection to the database is bound to the <code class="language-plaintext highlighter-rouge">conn</code> variable. The <code class="language-plaintext highlighter-rouge">conn.row_factory = dict_factory</code> line lets the connection object know to use the <code class="language-plaintext highlighter-rouge">dict_factory</code> function we’ve defined, which returns items from the database as dictionaries rather than lists—these work better when we output them to JSON. We then create a cursor object (<code class="language-plaintext highlighter-rouge">cur = conn.cursor()</code>), which is the object that actually moves through the database to pull our data. Finally, we execute an SQL query with the <code class="language-plaintext highlighter-rouge">cur.execute</code> method to pull out all available data (<code class="language-plaintext highlighter-rouge">*</code>) from the <code class="language-plaintext highlighter-rouge">books</code> table of our database. At the end of our function, this data is returned as JSON: <code class="language-plaintext highlighter-rouge">jsonify(all_books)</code>. Note that our other function that returns data, <code class="language-plaintext highlighter-rouge">api_filter</code>, will use a similar approach to pull data from the database.</p>
+
+<p>The purpose of our <code class="language-plaintext highlighter-rouge">page_not_found</code> function is to create an error page seen by the user if the user encounters an error or inputs a route that hasn’t been defined:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">app</span><span class="p">.</span><span class="n">errorhandler</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">page_not_found</span><span class="p">(</span><span class="n">e</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s">"&lt;h1&gt;404&lt;/h1&gt;&lt;p&gt;The resource could not be found.&lt;/p&gt;"</span><span class="p">,</span> <span class="mi">404</span>
+</code></pre></div></div>
+
+<p>In HTML responses, the code <code class="language-plaintext highlighter-rouge">200</code> means “OK”(the expected data transferred), while the code <code class="language-plaintext highlighter-rouge">404</code> means “Not Found” (there was no resource available at the URL given). This function allows us to return 404 pages when something goes wrong in the application.</p>
+
+<p>Our <code class="language-plaintext highlighter-rouge">api_filter</code> function is an improvement on our previous <code class="language-plaintext highlighter-rouge">api_id</code> function that returns a book based on its ID. This new function allows for filtering by three different fields: <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">published</code>, and <code class="language-plaintext highlighter-rouge">author</code>. The function first grabs all the query parameters provided in the URL (remember, query parameters are the part of the URL that follows the <code class="language-plaintext highlighter-rouge">?</code>, like <code class="language-plaintext highlighter-rouge">?id=10</code>).</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>query_parameters = request.args
+</code></pre></div></div>
+
+<p>It then pulls the supported parameters <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">published</code>, and <code class="language-plaintext highlighter-rouge">author</code> and binds them to appropriate variables:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>id = query_parameters.get('id')
+published = query_parameters.get('published')
+author = query_parameters.get('author')
+</code></pre></div></div>
+
+<p>The next segment begins to build an SQL query that will be used to find the requested information in the database. SQL queries used to find data in a database take this form:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>`SELECT &lt;columns&gt; FROM &lt;table&gt; WHERE &lt;column=match&gt; AND &lt;column=match&gt;;
+</code></pre></div></div>
+
+<p>To get the correct data, we need to build both an SQL query that looks like the above and a list with the filters that will be matched. Combined, the query and the the filters provided by the user will allow us to pull the correct books from our database.</p>
+
+<p>We begin to define both the query and the filter list:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>query = "SELECT * FROM books WHERE"
+to_filter = []
+</code></pre></div></div>
+
+<p>Then, if <code class="language-plaintext highlighter-rouge">id</code>, <code class="language-plaintext highlighter-rouge">published</code>, or <code class="language-plaintext highlighter-rouge">author</code> were provided as query parameters, we add them to both the query and the filter list:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">if</span> <span class="nb">id</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' id=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="nb">id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">published</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' published=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">published</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">author</span><span class="p">:</span>
+        <span class="n">query</span> <span class="o">+=</span> <span class="s">' author=? AND'</span>
+        <span class="n">to_filter</span><span class="p">.</span><span class="n">append</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>If the user has provided none of these query parameters, we have nothing to show, so we send them to the “404 Not Found” page:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">id</span> <span class="ow">or</span> <span class="n">published</span> <span class="ow">or</span> <span class="n">author</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">page_not_found</span><span class="p">(</span><span class="mi">404</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>To perfect our query, we remove the trailing ` AND<code class="language-plaintext highlighter-rouge"> and cap the query with the </code>;` required at the end of all SQL statements:</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">query</span> <span class="o">=</span> <span class="n">query</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">]</span> <span class="o">+</span> <span class="s">';'</span>
+</code></pre></div></div>
+
+<p>Finally, we connect to our database as in our <code class="language-plaintext highlighter-rouge">api_all</code> function, then execute the query we’ve built using our filter list:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conn = sqlite3.connect('books.db')
+conn.row_factory = dict_factory
+cur = conn.cursor()
+
+results = cur.execute(query, to_filter).fetchall()
+</code></pre></div></div>
+
+<p>Finally, we return the results of our executed SQL query as JSON to the user:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>return jsonify(results)
+</code></pre></div></div>
+
+<p>Whew! When all is said and done, this section of code reads query parameters provided by the user, builds an SQL query based on those parameters, executes that query to find matching books in the database, and returns those matches as JSON to the user. This section of code makes our API’s filtering capability considerably more sophisticated—users can now find books by, for example, Ursula K. Le Guin that were published in 1975 or all books in the database published in 2010.</p>
+
+<h2 id="our-api-in-practice">Our API in Practice<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#our-api-in-practice"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Now that we have implemented our Distant Reading API, let’s consider how it might be of use in digital projects and in research.</p>
+
+<p>One of the advantages of providing data through an API, as opposed to providing some kind of downloadable database or file for users, is that, as new data or additional resources are added, they become immediately available to projects built using the API. Imagine that we make our API publicly available, and a user creates a visualization that plots the length of a novel’s first sentence in characters against its year of publication:</p>
+
+<figure>
+    <img src="./Creating Web APIs with Python and Flask _ Programming Historian_files/hugo.png" alt="Scatterplot of first sentence length against date of publication.">
+<figcaption>
+    <p>Scatterplot of first sentence length against date of publication.</p>
+
+</figcaption>
+</figure>
+
+<p>As new Hugo winners were added to the database, the script that generated this visualization would immediately be able to use the new information. If the visualization were created in D3 or another web-based utility, this plot would actually reflect additional data added to the book archive as soon as the archive was updated—that is, in real time. As additional data accrued, we might, for example, learn if John Scalzi’s unusually lengthy opening to his 2013 <em>Red Shirts</em> was an aberration or the continuation of a longer trend toward wordiness in science fiction. Conversely, if your API were to change its URL structure or cease to function, applications based on it will no longer work. Remember that, when creating an API, you are assuming some responsibility for the applications that others may build with it.</p>
+
+<p>A strong API can be considered the backbone of a potentially limitless number of projects or avenues of research. Though the above example takes the form of a visualization of the limited amount of data we’ve provided in our Distant Reading Archive, a project based on this API might just as easily take the form of a Twitterbot that shares first sentences (learn how to make one with <a href="https://programminghistorian.org/lessons/intro-to-twitterbots">this</a> Programming Historian lesson) or a library webpage that displays book openings and year of publication alongside other book metadata. In many cases, it makes sense to first create an API interface to your core data or functionality before extrapolating on it to create a visualization, application, or website. Not only does it make your work accessible to researchers working on other projects, but it often leads to a more comprehensible and maintainable project.</p>
+
+<h1 id="resources">Resources</h1>
+
+<p>The below resources provide information on useful APIs for researchers in the humanities and social sciences as well as further reading on API concepts.</p>
+
+<h2 id="apis-for-humanities-researchers">APIs for Humanities Researchers<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#apis-for-humanities-researchers"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p><a href="http://chroniclingamerica.loc.gov/" target="_blank">Chronicling America (Library Of Congress)</a> - A digitized collection of American newspaper articles from the 18th to the 20th century.</p>
+
+<p><a href="https://core.ac.uk/" target="_blank">Connecting Repositories (CORE)</a> - A collection of open access articles from various sources hosted by the Open University.</p>
+
+<p><a href="https://diggingintodata.org/repositories/english-broadside-ballad-archive-ebba" target="_blank">English Broadside Ballad Archive (EBBA)</a></p>
+
+<p><a href="http://hds.essex.ac.uk/" target="_blank">History Data Service (HDS)</a> - A collection of data from a wide variety of historical sources.</p>
+
+<p><a href="https://pro.europeana.eu/" target="_blank">Europeana</a></p>
+
+<p><a href="https://diggingintodata.org/repositories" target="_blank">Digging into Data API List</a></p>
+
+<h2 id="api-resources">API Resources<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#api-resources"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p><a href="https://doepud.co.uk/blog/anatomy-of-a-url" target="_blank">Anatomy of a URL</a> - Explains the different sections of a URL (protocol, domain, path, and so on) in greater detail.</p>
+
+<p><a href="https://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm" target="_blank">Original Paper on REST</a>  - PhD thesis by Roy Thomas Fielding that introduced the concepts behind the REST philosophy of API design.</p>
+
+<p><a href="https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-i-hello-world" target="_blank">The Flask Mega Tutorial</a> - The most well-known tutorial for learning the Flask web framework.</p>
+
+  </div>
+
+  
+
+  
+
+
+
+<div class="author-info">
+    <h5 class="author-name">About the author</h5>
+</div>
+<div class="author-description">
+  
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+         <p>Patrick Smyth is a PhD student in English and Digital Fellow at the Graduate Center, CUNY.
+</p><p>
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+     
+
+</p></div>
+
+
+  <div class="citation-info">
+    
+    
+    
+
+    <h5 class="suggested-citation-header">Suggested Citation</h5>
+    <div class="suggested-citation-text">
+      <p class="suggested-citation-text">
+
+
+
+Patrick Smyth,
+        "Creating Web APIs with Python and Flask,"
+        <em>The Programming Historian</em> 7 (2018),
+        https://doi.org/10.46430/phen0072.</p>
+    </div>
+  </div>
+
+  
+  
+<div class="alert alert-success hide-screen"><h2 id="donate-today">Donate today!<a class="header-link" href="https://programminghistorian.org/en/lessons/creating-apis-with-python-and-flask#donate-today"><i class="fa fa-link" style="font-size: 0.8em"></i></a></h2>
+
+<p>Great Open Access tutorials cost money to produce. Join the growing number of people <a href="https://www.patreon.com/theprogramminghistorian" target="_blank">supporting <em>The Programming Historian</em></a> so we can continue to share knowledge free of charge.</p>
+</div>
+
+  
+
+</div>
+
+
+<script>
+  (function () {
+    var githubAPI = "https://api.github.com/repos/programminghistorian/jekyll/commits";
+    $.getJSON(githubAPI, {
+      path: "en/lessons/creating-apis-with-python-and-flask.md"
+    })
+      .done(function (data) {
+        var date = new Date(data[0].commit.author.date);
+        var formatted_date = new Intl.DateTimeFormat('sv').format(date)
+        $("#modified-date").text(formatted_date);
+      });
+  })();
+</script>
+
+      
+
+<footer role="contentinfo" style="background-color: #444444">
+
+
+<div class="d-flex flex-wrap justify-content-center footer-head">
+  <p><em>The Programming Historian</em> (ISSN: 2397-2068) is released under a <a href="https://creativecommons.org/licenses/by/4.0/deed.en" target="_blank">CC-BY</a> license.</p>
+<p>This project is administered by ProgHist Limited, Company Number <a href="https://beta.companieshouse.gov.uk/company/12192946" target="_blank">12192946</a>.</p>
+
+</div>
+
+<div class="d-flex flex-wrap justify-content-around">
+  <div class="mx-4">
+     
+    <strong>
+      <p>
+        <a href="https://programminghistorian.org/">ISSN 2397-2068 ()</a>
+      </p>
+      </strong>  
+      <p>
+        <a href="https://programminghistorian.org/es">ISSN 2517-5769 ()</a>
+      </p>
+        
+      <p>
+        <a href="https://programminghistorian.org/fr">ISSN 2631-9462 ()</a>
+      </p>
+       
+  </div>
+  <div class="mx-4">
+    <i class="fab fa-github" aria-hidden="true"></i>
+    <a href="https://github.com/programminghistorian/jekyll" target="_blank">Hosted on GitHub</a>
+  </div>
+
+  <div class="mx-4">
+  <i class="fa fa-calendar" aria-hidden="true"></i>
+    <a href="https://github.com/programminghistorian/jekyll/commits/gh-pages" target="_blank">Site last updated 12 June 2020</a>
+  </div>
+ 
+ <div class="mx-4">
+  <i class="fas fa-rss" aria-hidden="true"></i>
+  <a href="https://programminghistorian.org/feed.xml">RSS feed subscriptions</a>
+  </div>
+ 
+  <div class="mx-4">
+  <i class="fa fa-history" aria-hidden="true"></i>
+  <a href="https://github.com/programminghistorian/jekyll/commits/gh-pages/en/lessons/creating-apis-with-python-and-flask.md" target="_blank">See page history</a>
+  </div>
+
+  <div class="mx-4">
+  <i class="fa fa-bolt" aria-hidden="true"></i>
+  <a href="https://programminghistorian.org/en/feedback">Make a suggestion</a>
+  </div>
+
+  </div>
+
+</footer>
+
+
+
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-2752866-8']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+    </main>
+  
+
+
+</body></html>

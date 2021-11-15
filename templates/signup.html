@@ -1,0 +1,21 @@
+<!--telling our code that first load base.html , and then add this part in the block of the base.html-->
+{% extends "base.html" %}
+
+{% block content %}
+<h1> Sign Up  </h1>
+<form action="" method="POST">
+    <!--we are going to create an object of the signup form class, patch that into this view using jinja-->
+    <p>
+        {{form.username.label}}<br>
+        {{form.username(size=30)}}
+    </p>
+    <p>
+        {{form.password.label}}<br>
+        {{form.password(size=30)}}
+    </p>
+    <p>
+        {{form.submit()}}
+    </p>
+    <!--render this from main api(api_final.py)-->
+</form>
+{% endblock %}

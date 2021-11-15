@@ -1,0 +1,19 @@
+<!--telling our code that first load base.html , and then add this part in the block of the base.html-->
+{% extends "base.html" %}
+
+{% block content %}
+<h1> Welcome to this blog through a template  </h1>
+<p> Hi guys this {{ author }} is he author of this blog </p>
+<!--for conditional statements using jinja use one curly bracket , and for using an arguement input use double curly-->
+<!--if statements using jinja-->
+{% if sunny %}
+<p> Today it is sunny </p>
+{% else %}
+<p> Today it is Raining </p>
+{% endif %}
+<!--for statements using jinja-->
+{% for book in books %}
+<h2> Book title is {{book.title}} </h2>
+<h3> Book author is {{book.author}} </h3>
+{% endfor %}
+{% endblock %}
